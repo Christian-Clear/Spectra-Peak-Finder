@@ -1,17 +1,45 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 Outputs max peak height for spectral lines above the discriminator height in and xgremlin .asc output file
 
 Command line: peakfind [input .asc file] [discriminator] [output file]
-
-Author:  Christian Clear
-Version: 1.0
-Date:    22-10-15
 """
+
+author = "Christian Clear"
+version = "1.0"
+date = "22-10-15"
+
 import sys
+
+if len(sys.argv) == 1:
+    print """
+    ---------------------------------------------------------------------------
+    FTS Peak Finder v%s (built %s)
+    
+    Syntax usage:
+        ftspeakfind <input file> <discriminator> <output file>
+    
+    <input file>    :  An Xgremlin .asc file creates using writeasc
+    <discriminator> :  The minumum peak height
+    <output file>   :  Either a .aln or .syn filetype must be used
+
+    ---------------------------------------------------------------------------
+    """ % (version, date)
+    
+    sys.exit()
+
+
+input_filetype = str(sys.argv[3]).split(".")[-1]  # returns the input filetype
+
+if input_filetype != "asc":
+    print "ERROR: the input file must be an Xgremlin .asc file"
+    sys.exit()
+    
 
 f = open(str(sys.argv[1]))
 fout = open(str(sys.argv[3]), 'w+')
+
 
 line = []
 height = []
@@ -32,14 +60,15 @@ for point in f:
             wavenumbers.append(line[height.index(max(height))])
             line = []   
             height = []
+            
 
-filetype = str(sys.argv[3]).split(".")[-1]  # returns the output filetype
+output_filetype = str(sys.argv[3]).split(".")[-1]  # returns the output filetype
 
-if filetype == "syn":
+if output_filetype == "syn":
     for line in wavenumbers:
         fout.write('s6D)4d e5P       ' + line[:12]+ '   30.0000   100.00  0.0000' + '\n')
 
-elif filetype == "aln":
+elif output_filetype == "aln":
     fout.write("""  NO wavenumber correction applied. (wavcorr =    0.0000000000000000       not used.)
   NO air correction applied to wavelengths.
   NO intensity calibration.
@@ -49,6 +78,7 @@ elif filetype == "aln":
 
 else:
     print "Filetype is not supported. Please specify .aln or .syn"
+
 
 f.close()
 fout.close()    
