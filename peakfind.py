@@ -30,7 +30,7 @@ if len(sys.argv) == 1:
     sys.exit()
 
 
-input_filetype = str(sys.argv[3]).split(".")[-1]  # returns the input filetype
+input_filetype = str(sys.argv[1]).split(".")[-1]  # returns the input filetype
 
 if input_filetype != "asc":
     print "ERROR: the input file must be an Xgremlin .asc file"
@@ -78,6 +78,8 @@ elif output_filetype == "aln":
 
 else:
     print "Filetype is not supported. Please specify .aln or .syn"
+    
+print "\nTotal peaks found: ", len(wavenumbers)
 
 
 f.close()
